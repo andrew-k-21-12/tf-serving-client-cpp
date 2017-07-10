@@ -52,14 +52,19 @@ function(PROTOBUF_GENERATE_GRPC_CPP SRCS HDRS)
 
         # Firing sources generation command.
         add_custom_command(
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.grpc.pb.cc"
-                "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.grpc.pb.h"
-                COMMAND  ${Protobuf_PROTOC_EXECUTABLE}
-                ARGS --grpc_out=${CMAKE_CURRENT_BINARY_DIR}
-                --plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}
-                ${_protobuf_include_path} ${ABS_FIL}
-                DEPENDS ${ABS_FIL} ${Protobuf_PROTOC_EXECUTABLE}
-                COMMENT "Running gRPC C++ protocol buffer compiler on ${FIL}"
+                OUTPUT
+                    "${CMAKE_CURRENT_BINARY_DIR}/${DIR_FIL}/${FIL_WE}.grpc.pb.cc"
+                    "${CMAKE_CURRENT_BINARY_DIR}/${DIR_FIL}/${FIL_WE}.grpc.pb.h"
+                COMMAND
+                    ${Protobuf_PROTOC_EXECUTABLE}
+                ARGS
+                    --grpc_out=${CMAKE_CURRENT_BINARY_DIR}
+                    --plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}
+                    ${_protobuf_include_path} ${ABS_FIL}
+                DEPENDS
+                    ${ABS_FIL} ${Protobuf_PROTOC_EXECUTABLE}
+                COMMENT
+                    "Running gRPC C++ protocol buffer compiler on ${FIL}"
                 VERBATIM)
     endforeach()
 

@@ -51,7 +51,8 @@ protobuf_generate_cpp(PROTO_SOURCES PROTO_HEADERS
         tensorflow_serving/apis/input.proto
         tensorflow_serving/apis/model.proto
         tensorflow_serving/apis/predict.proto
-        tensorflow_serving/apis/regression.proto)
+        tensorflow_serving/apis/regression.proto
+        tensorflow_serving/apis/prediction_service.proto)
 
 # File to generate source from proto with gRPC plugin.
 protobuf_generate_grpc_cpp(PROTO_GRPC_SOURCES PROTO_GRPC_HEADERS
