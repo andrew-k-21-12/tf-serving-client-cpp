@@ -12,8 +12,8 @@ project(tf-serving-client-cpp)
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
-# gRPC plugin dependency.
-include(ProtoGenGrpc.cmake)
+# Protobuf compiler dependency.
+include(CompileProto.cmake)
 
 # OpenCV dependency.
 find_package(OpenCV
@@ -23,40 +23,18 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 
 
-# Keeping the same files system structure in generated sources.
-set(PROTOBUF_GENERATE_CPP_APPEND_PATH OFF)
+# Protobuf sources of the TensorFlow Serving to be compiled without a gRPC plugin.
+file(GLOB_RECURSE TF_PROTOS proto/*.proto)
 
-# Including generated files as sources for project.
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Compiling CPP sources from proto files.
+compile_proto(0 "${CMAKE_SOURCE_DIR}/proto" "${CMAKE_SOURCE_DIR}/compiled" PB_SOURCES PB_HEADERS ${TF_PROTOS})
 
-# Files to generate usual sources from proto.
-protobuf_generate_cpp(PROTO_SOURCES PROTO_HEADERS
-        tensorflow/core/example/example.proto
-        tensorflow/core/example/feature.proto
-        tensorflow/core/framework/attr_value.proto
-        tensorflow/core/framework/function.proto
-        tensorflow/core/framework/graph.proto
-        tensorflow/core/framework/node_def.proto
-        tensorflow/core/framework/op_def.proto
-        tensorflow/core/framework/resource_handle.proto
-        tensorflow/core/framework/tensor.proto
-        tensorflow/core/framework/tensor_shape.proto
-        tensorflow/core/framework/types.proto
-        tensorflow/core/framework/versions.proto
-        tensorflow/core/protobuf/meta_graph.proto
-        tensorflow/core/protobuf/saver.proto
-        tensorflow_serving/apis/classification.proto
-        tensorflow_serving/apis/get_model_metadata.proto
-        tensorflow_serving/apis/inference.proto
-        tensorflow_serving/apis/input.proto
-        tensorflow_serving/apis/model.proto
-        tensorflow_serving/apis/predict.proto
-        tensorflow_serving/apis/regression.proto
-        tensorflow_serving/apis/prediction_service.proto)
+# Compiling CPP sources with gRPC plugin.
+compile_proto(1 "${CMAKE_SOURCE_DIR}/proto" "${CMAKE_SOURCE_DIR}/compiled" PB_GRPC_SOURCES PB_GRPC_HEADERS
+        proto/tensorflow_serving/apis/prediction_service.proto)
 
-# File to generate source from proto with gRPC plugin.
-protobuf_generate_grpc_cpp(PROTO_GRPC_SOURCES PROTO_GRPC_HEADERS
-        tensorflow_serving/apis/prediction_service.proto)
+# Including compiled files.
+include_directories(compiled)
 
 
 
@@ -68,8 +46,8 @@ set(SOURCES main.cpp)
 
 # A target to generate an executable binary.
 add_executable(${CMAKE_PROJECT_NAME}
-        ${PROTO_HEADERS} ${PROTO_SOURCES}
-        ${PROTO_GRPC_HEADERS} ${PROTO_GRPC_SOURCES}
+        ${PB_HEADERS} ${PB_SOURCES}
+        ${PB_GRPC_HEADERS} ${PB_GRPC_SOURCES}
         ${SOURCES})
 target_link_libraries(${CMAKE_PROJECT_NAME} ${PROTOBUF_LIBRARIES} grpc++ ${OpenCV_LIBS})
 

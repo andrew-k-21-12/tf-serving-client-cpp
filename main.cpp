@@ -112,6 +112,8 @@ int main(int argc, char** argv) {
     // Showing result from remote server.
     if (maxIndex != -1) {
       std::cout << "Result class is " << maxIndex << " with response " << max << std::endl;
+    } else {
+      std::cout << "There are no classes available to make a prediction" << std::endl;
     }
   }
 
