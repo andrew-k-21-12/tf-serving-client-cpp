@@ -13,7 +13,7 @@ you should install next dependencies:
   * `git clone https://github.com/google/protobuf`
   * `cd protobuf`
   * `./autogen.sh`
-  * `./configure && make && make check && sudo make install`
+  * `./configure && make && make check && sudo make install && sudo ldconfig`
   
 * gRPC (https://github.com/grpc/grpc/tree/master/src/cpp):
   * `sudo apt-get install build-essential autoconf libtool`
@@ -33,9 +33,11 @@ Before the compilation make sure that you have provided some host
 with a running TensorFlow Serving model in the `main.cpp` file.
 
 The compilation is quite similar to ones which use CMake system.
+But make sure to provide a path to the installed Protobuf Compiler
+using `Protobuf_PROTOC_EXECUTABLE` for it.
 For example you can use a bunch of commands (from the root of the repo):
 
-`mkdir build && cd build && cmake .. && make`
+`mkdir build && cd build && cmake -D Protobuf_PROTOC_EXECUTABLE=/usr/local/bin/protoc .. && make`
 
 A built executable accepts one argument with a path to an image
 to be sent to the server:
